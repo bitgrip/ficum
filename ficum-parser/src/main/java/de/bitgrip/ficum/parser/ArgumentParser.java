@@ -2,12 +2,7 @@ package de.bitgrip.ficum.parser;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.TimeZone;
+import java.util.*;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -38,6 +33,7 @@ public class ArgumentParser extends BaseParser<Object> {
         baseTypes.add(Long.class);
         baseTypes.add(Boolean.class);
         baseTypes.add(Calendar.class);
+        baseTypes.add(UUID.class);
     }
 
     protected static final DateTimeFormatter ISO8601_TIMESTAMP = ISODateTimeFormat.dateTime().withOffsetParsed()
@@ -65,7 +61,7 @@ public class ArgumentParser extends BaseParser<Object> {
     }
 
     protected Rule Argument() {
-        return Sequence(FirstOf(StringLiteral(), IntegerLiteral(), DoubleLiteral(), FloatLiteral(), DateLiteral(),
+        return Sequence(FirstOf(UUIDLiteral(), StringLiteral(), IntegerLiteral(), DoubleLiteral(), FloatLiteral(), DateLiteral(),
                 TimestampLiteral(), BooleanTrue(), BooleanFalse(), NullLiteral()), new Action<Comparable<?>>() {
                     public boolean run(Context<Comparable<?>> context) {
                         Comparable<?> argument = context.getValueStack().peek();
@@ -178,7 +174,11 @@ public class ArgumentParser extends BaseParser<Object> {
     }
 
     protected Rule HexDigit() {
-        return FirstOf(CharRange('a', 'f'), UpperHexChar(), Digit());
+      return FirstOf(LowerHexChar(), UpperHexChar(), Digit());
+    }
+
+    protected Rule LowerHexDigit(){
+      return FirstOf(LowerHexChar(), Digit());
     }
 
     @SuppressSubnodes
@@ -272,6 +272,26 @@ public class ArgumentParser extends BaseParser<Object> {
         return FirstOf(CharRange('a', 'z'), CharRange('A', 'Z'), Digit(), AnyOf("-+."));
     }
 
+    /**
+     * UUID format: b2cc307c-eb6d-4aca-bc0c-64a7c2f49c86
+     *              8 Hexdigits '-' 4 Hexdigits '-' 4 Hexdigits '-' 4 Hexdigits '-' 12 Hexdigits
+     * @return
+     */
+    protected Rule UUIDLiteral() {
+      return Sequence(Sequence(NTimes(8, LowerHexDigit()), Ch('-'), NTimes(4, LowerHexDigit()), Ch('-'),
+              NTimes(4, LowerHexDigit()), Ch('-'), NTimes(4, LowerHexDigit()), Ch('-'), NTimes(12, LowerHexDigit())),
+              new Action<Comparable<?>>() {
+                public boolean run(Context<Comparable<?>> context) {
+                  try {
+                    UUID uuid = UUID.fromString(match());
+                    return push(uuid);
+                  } catch (Exception e) {
+                    return false;
+                  }
+                }
+              });
+    }
+
     protected Rule StringLiteral() {
         final StringVar literal = new StringVar();
         return Sequence(Sequence(Ch('\''),
@@ -316,6 +336,11 @@ public class ArgumentParser extends BaseParser<Object> {
     @MemoMismatches
     protected Rule UpperHexChar() {
         return CharRange('A', 'F');
+    }
+
+    @MemoMismatches
+    protected Rule LowerHexChar(){
+      return CharRange('a', 'f');
     }
 
 }

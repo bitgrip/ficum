@@ -3,6 +3,7 @@ package de.bitgrip.ficum.parser;
 import java.io.UnsupportedEncodingException;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.UUID;
 
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
@@ -405,6 +406,30 @@ public class ArgumentParserTest {
         String input = "''";
 
         assertValue(expected, input);
+    }
+
+    @Test()
+    public void testPositive_uuid() {
+        final UUID expected = UUID.randomUUID();
+        String input = expected.toString();
+
+        assertValue(expected, input);
+    }
+
+    @Test()
+    public void testError_uppercase_uuid() {
+        final UUID expected = UUID.randomUUID();
+        String input = expected.toString().toUpperCase();
+
+        assertError(InvalidInputError.class, input);
+    }
+
+    @Test()
+    public void testError_invalid_uuid() {
+        final UUID expected = UUID.randomUUID();
+        String input = expected.toString()+"a";
+
+        assertError(InvalidInputError.class, input);
     }
 
     @Test()
