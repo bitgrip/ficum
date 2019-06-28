@@ -58,6 +58,7 @@ public class JPAPredicateVisitor<T> extends AbstractVisitor<Predicate> {
     mappedTypes.add(Calendar.class);
     mappedTypes.add(ReadablePartial.class);
     mappedTypes.add(ReadableInstant.class);
+    mappedTypes.add(UUID.class);
   }
 
   private static boolean containsEscapedChar(String value) {
