@@ -244,6 +244,8 @@ public class JPAPredicateVisitorTest {
         Assert.assertEquals(2, results.size());
     }
 
+
+
     @Test
     public void testNestedTimestamp() {
         OffsetDateTime dateTime = OffsetDateTime.of(2013, 1, 4,
@@ -301,6 +303,19 @@ public class JPAPredicateVisitorTest {
         List<Pet> results = query.getResultList();
 
         Assert.assertEquals(2, results.size());
+    }
+
+    @Test
+    public void testInPredicateWithNestedEnum() {
+        String input = "visits.type=in=['SCHEDULED','EMERGENCY']";
+        Node node = ParseHelper.parse(input, allowedSelectorNames);
+
+        Predicate predicate = petVisitor.start(node);
+        TypedQuery<Pet> query = getTypedQuery(predicate);
+
+        List<Pet> results = query.getResultList();
+
+        Assert.assertEquals(3, results.size());
     }
 
     @Test

@@ -55,3 +55,4 @@ INSERT INTO visits VALUES (1, 7, '2013-01-01 15:45:00', 'rabies shot _', 'SCHEDU
 INSERT INTO visits VALUES (2, 8, '2013-01-02 11:30:00', 'rabies shot', 'SCHEDULED');
 INSERT INTO visits VALUES (3, 8, '2013-01-03 16:00:00', 'neutered', 'SCHEDULED');
 INSERT INTO visits VALUES (4, 7, '2013-01-04 09:15:00', 'car incident', 'EMERGENCY');
+INSERT INTO visits VALUES (5, 9, '2013-01-03 16:00:00', 'car incident', 'EMERGENCY');

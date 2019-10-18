@@ -15,6 +15,7 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class JPAPredicateVisitor<T> extends AbstractVisitor<Predicate> {
 
@@ -272,6 +273,39 @@ public class JPAPredicateVisitor<T> extends AbstractVisitor<Predicate> {
         return false;
     }
 
+    private Comparable<?> convertValue(Comparable<?> value,  Class<? extends Comparable> clazz ){
+        // convert from string to enum
+        if (value instanceof String && clazz.isEnum()) {
+            value = Enum.valueOf((Class<? extends Enum>) clazz, value.toString());
+        }
+
+        // convert date and time types
+        if (value instanceof LocalDate && clazz.isAssignableFrom(Date.class)) {
+            value = Date.from(((LocalDate) value).atStartOfDay()
+                    .atZone(ZoneId.of("UTC"))
+                    .toInstant());
+        }
+
+        if (value instanceof LocalDate && clazz.isAssignableFrom(Calendar.class)) {
+            value = GregorianCalendar.from(((LocalDate) value).atStartOfDay()
+                    .atZone(ZoneId.of("UTC")));
+        }
+
+        if (value instanceof LocalDate && clazz.isAssignableFrom(OffsetDateTime.class)) {
+            value = OffsetDateTime.from(((LocalDate) value).atStartOfDay()
+                    .atZone(ZoneId.of("UTC")));
+        }
+
+        if (value instanceof OffsetDateTime && clazz.isAssignableFrom(Date.class)) {
+            value = Date.from(((OffsetDateTime) value).toInstant());
+        }
+
+        if (value instanceof OffsetDateTime && clazz.isAssignableFrom(Calendar.class)) {
+            value = GregorianCalendar.from(((OffsetDateTime) value).toZonedDateTime());
+        }
+        return value;
+    }
+
     public Predicate start(Node node) {
         predicates = new ArrayList<>();
         node.accept(this);
@@ -290,42 +324,16 @@ public class JPAPredicateVisitor<T> extends AbstractVisitor<Predicate> {
         if (argument instanceof Comparable<?>) {
             Comparable<?> value = (Comparable<?>) argument;
 
-            // convert from string to enum
-            if (value instanceof String && clazz.isEnum()) {
-                value = Enum.valueOf((Class<? extends Enum>) clazz, value.toString());
-            }
-
-            // convert date and time types
-            if (value instanceof LocalDate && clazz.isAssignableFrom(Date.class)) {
-                value = Date.from(((LocalDate) value).atStartOfDay()
-                        .atZone(ZoneId.of("UTC"))
-                        .toInstant());
-            }
-
-            if (value instanceof LocalDate && clazz.isAssignableFrom(Calendar.class)) {
-                value = GregorianCalendar.from(((LocalDate) value).atStartOfDay()
-                        .atZone(ZoneId.of("UTC")));
-            }
-
-            if (value instanceof LocalDate && clazz.isAssignableFrom(OffsetDateTime.class)) {
-                value = OffsetDateTime.from(((LocalDate) value).atStartOfDay()
-                        .atZone(ZoneId.of("UTC")));
-            }
-
-            if (value instanceof OffsetDateTime && clazz.isAssignableFrom(Date.class)) {
-                value = Date.from(((OffsetDateTime) value).toInstant());
-            }
-
-            if (value instanceof OffsetDateTime && clazz.isAssignableFrom(Calendar.class)) {
-                value = GregorianCalendar.from(((OffsetDateTime) value).toZonedDateTime());
-            }
+            value = convertValue(value,clazz);
 
             pred = isCollectionSizeCheck(path, value)
                     ? doBuildCollectionSizePredicate(node.getComparison(), path, (Integer) value)
                     : doBuildPredicate(node.getComparison(), path.as(clazz), value);
 
         } else if (argument instanceof List) {
-            pred = doBuildPredicate(node.getComparison(), path.as(clazz), sanatizeToComparable((List) argument));
+            //transform all values to their correct types
+            List<Comparable<?>> transformedValues = ((List<Comparable<?>>) argument).stream().map(v -> convertValue(v, clazz)).collect(Collectors.toList());
+            pred = doBuildPredicate(node.getComparison(), path.as(clazz), sanatizeToComparable(transformedValues));
         } else if (argument == null) {
             pred = doBuildPredicate(node.getComparison(), path.as(clazz), (Comparable<?>) null);
         } else {
