@@ -331,7 +331,7 @@ public class JPAPredicateVisitor<T> extends AbstractVisitor<Predicate> {
                     : doBuildPredicate(node.getComparison(), path.as(clazz), value);
 
         } else if (argument instanceof List) {
-            //transform all values to their correct types
+            //convert all values to the supported data-type
             List<Comparable<?>> transformedValues = ((List<Comparable<?>>) argument).stream().map(v -> convertValue(v, clazz)).collect(Collectors.toList());
             pred = doBuildPredicate(node.getComparison(), path.as(clazz), sanatizeToComparable(transformedValues));
         } else if (argument == null) {
