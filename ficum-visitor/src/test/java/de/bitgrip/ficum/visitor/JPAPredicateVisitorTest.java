@@ -244,8 +244,6 @@ public class JPAPredicateVisitorTest {
         Assert.assertEquals(2, results.size());
     }
 
-
-
     @Test
     public void testNestedTimestamp() {
         OffsetDateTime dateTime = OffsetDateTime.of(2013, 1, 4,
