@@ -1,5 +1,6 @@
 package de.bitgrip.ficum.parser;
 
+import java.util.Arrays;
 import java.util.Deque;
 
 import org.parboiled.Parboiled;
@@ -16,7 +17,7 @@ public class ParseHelper {
     }
 
     public static final Node parse(String query, String... allowedSelectorNames) {
-        ExpressionParser parser = Parboiled.createParser(ExpressionParser.class, (Object) allowedSelectorNames);
+        ExpressionParser parser = Parboiled.createParser(ExpressionParser.class, (Object) Arrays.copyOf(allowedSelectorNames, allowedSelectorNames.length));
         ReportingParseRunner<Deque<Object>> parseRunner = new ReportingParseRunner<Deque<Object>>(parser.root());
         ParsingResult<Deque<Object>> result = parseRunner.run(query);
 
