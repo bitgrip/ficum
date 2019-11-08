@@ -39,10 +39,14 @@
     <module>ficum-node</module>
     <module>ficum-parser</module>
     <module>ficum-visitor</module>
+    <module>ficum-annotation</module>
+    <module>ficum-converter</module>
+    <module>ficum-swagger</module>
   </modules>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <spring.version>5.1.5.RELEASE</spring.version>
+    <springfox.version>2.9.2</springfox.version>
   </properties>
   <distributionManagement>
     <snapshotRepository>
@@ -56,6 +60,16 @@
   </distributionManagement>
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>io.springfox</groupId>
+        <artifactId>springfox-spi</artifactId>
+        <version>${springfox.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.springfox</groupId>
+        <artifactId>springfox-swagger-common</artifactId>
+        <version>${springfox.version}</version>
+      </dependency>
       <dependency>
         <groupId>org.hibernate.javax.persistence</groupId>
         <artifactId>hibernate-jpa-2.1-api</artifactId>
@@ -114,7 +128,17 @@
       </dependency>
       <dependency>
         <groupId>org.springframework</groupId>
+        <artifactId>spring-core</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
         <artifactId>spring-orm</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-web</artifactId>
         <version>${spring.version}</version>
       </dependency>
       <dependency>
