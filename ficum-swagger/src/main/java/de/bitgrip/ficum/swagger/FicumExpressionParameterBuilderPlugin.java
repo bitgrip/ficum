@@ -1,7 +1,6 @@
 package de.bitgrip.ficum.swagger;
 
 import com.fasterxml.classmate.TypeResolver;
-import com.google.common.base.Optional;
 import de.bitgrip.ficum.annotation.FicumExpression;
 import org.springframework.core.annotation.Order;
 import springfox.documentation.service.ResolvedMethodParameter;
@@ -9,6 +8,8 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.ParameterBuilderPlugin;
 import springfox.documentation.spi.service.contexts.ParameterContext;
 import springfox.documentation.swagger.common.SwaggerPluginSupport;
+
+import java.util.Optional;
 
 /**
  * <p>Plugin which attaches a description to all parameters which are annotated with FicumExpression.
@@ -42,7 +43,7 @@ public class FicumExpressionParameterBuilderPlugin implements ParameterBuilderPl
   @Override
   public void apply(ParameterContext parameterContext) {
     ResolvedMethodParameter methodParameter = parameterContext.resolvedMethodParameter();
-    Optional<FicumExpression> ficumExpressionAnnotation = methodParameter.findAnnotation(FicumExpression.class);
+    Optional<FicumExpression> ficumExpressionAnnotation = methodParameter.findAnnotation(FicumExpression.class).toJavaUtil();
 
     if (ficumExpressionAnnotation.isPresent()) {
       String joinedAllowedValues = String.join(", ", ficumExpressionAnnotation.get().value());
