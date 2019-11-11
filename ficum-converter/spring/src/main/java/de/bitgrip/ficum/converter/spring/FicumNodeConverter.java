@@ -4,7 +4,6 @@ import de.bitgrip.ficum.annotation.FicumExpression;
 import de.bitgrip.ficum.node.Node;
 import de.bitgrip.ficum.node.QueryPrinterVisitor;
 import de.bitgrip.ficum.parser.ParseHelper;
-import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.core.convert.converter.GenericConverter;
 
