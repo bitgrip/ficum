@@ -22,7 +22,7 @@ public class FicumNodeConverterTest {
   @Test
   public void convert_string_to_node_with_acceptable_source() throws NoSuchFieldException {
     String expression = "foo=='abc'";
-    TypeDescriptor sourceType = new TypeDescriptor(DummyFicumTestClass.class.getDeclaredField("sourceField"));
+    TypeDescriptor sourceType = new TypeDescriptor(DummyFicumTestClass.class.getDeclaredField("stringField"));
     TypeDescriptor targetType = new TypeDescriptor(DummyFicumTestClass.class.getDeclaredField("nodeFieldWithAnnotation"));
 
     Node node = (Node) ficumNodeConverter.convert(expression, sourceType, targetType);
@@ -33,7 +33,7 @@ public class FicumNodeConverterTest {
   @Test(expected = IllegalStateException.class)
   public void convert_string_to_node__with_not_annotated_field() throws NoSuchFieldException {
     String expression = "foo=='abc'";
-    TypeDescriptor sourceType = new TypeDescriptor(DummyFicumTestClass.class.getDeclaredField("sourceField"));
+    TypeDescriptor sourceType = new TypeDescriptor(DummyFicumTestClass.class.getDeclaredField("stringField"));
     TypeDescriptor targetType = new TypeDescriptor(DummyFicumTestClass.class.getDeclaredField("nodeFieldWithoutAnnotation"));
 
     ficumNodeConverter.convert(expression, sourceType, targetType);
@@ -43,7 +43,7 @@ public class FicumNodeConverterTest {
   public void convert_string_to_node__with_not_acceptable_source() throws NoSuchFieldException {
     String expression = "foo=='abc'";
     TypeDescriptor sourceType = new TypeDescriptor(DummyFicumTestClass.class.getDeclaredField("sourceObjectField"));
-    TypeDescriptor targetType = new TypeDescriptor(DummyFicumTestClass.class.getDeclaredField("nodeFieldWithoutAnnotation"));
+    TypeDescriptor targetType = new TypeDescriptor(DummyFicumTestClass.class.getDeclaredField("nodeFieldWithAnnotation"));
 
     ficumNodeConverter.convert(expression, sourceType, targetType);
   }
@@ -52,7 +52,7 @@ public class FicumNodeConverterTest {
   public void convert_node_to_string_with_acceptable_source() throws NoSuchFieldException {
     Node filter = Builder.start().constraint("foo", Comparison.EQUALS, "ba").build();
     TypeDescriptor sourceType = new TypeDescriptor(DummyFicumTestClass.class.getDeclaredField("nodeFieldWithAnnotation"));
-    TypeDescriptor targetType = new TypeDescriptor(DummyFicumTestClass.class.getDeclaredField("sourceField"));
+    TypeDescriptor targetType = new TypeDescriptor(DummyFicumTestClass.class.getDeclaredField("stringField"));
 
     String result = (String) ficumNodeConverter.convert(filter, sourceType,targetType);
 
@@ -63,7 +63,7 @@ public class FicumNodeConverterTest {
   public void convert_node_to_string_with_not_acceptable_source() throws NoSuchFieldException {
     Node filter = Builder.start().constraint("foo", Comparison.EQUALS, "ba").build();
     TypeDescriptor sourceType = new TypeDescriptor(DummyFicumTestClass.class.getDeclaredField("sourceObjectField"));
-    TypeDescriptor targetType = new TypeDescriptor(DummyFicumTestClass.class.getDeclaredField("sourceField"));
+    TypeDescriptor targetType = new TypeDescriptor(DummyFicumTestClass.class.getDeclaredField("stringField"));
 
     String result = (String) ficumNodeConverter.convert(filter, sourceType,targetType);
 
@@ -76,7 +76,7 @@ public class FicumNodeConverterTest {
 
     private Node nodeFieldWithoutAnnotation;
 
-    private String sourceField;
+    private String stringField;
 
     private Object sourceObjectField;
 

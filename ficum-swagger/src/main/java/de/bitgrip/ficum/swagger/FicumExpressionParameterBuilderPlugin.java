@@ -4,7 +4,6 @@ import com.fasterxml.classmate.TypeResolver;
 import com.google.common.base.Optional;
 import de.bitgrip.ficum.annotation.FicumExpression;
 import org.springframework.core.annotation.Order;
-import org.springframework.web.bind.annotation.*;
 import springfox.documentation.service.ResolvedMethodParameter;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.ParameterBuilderPlugin;
@@ -24,8 +23,8 @@ import springfox.documentation.swagger.common.SwaggerPluginSupport;
 public class FicumExpressionParameterBuilderPlugin implements ParameterBuilderPlugin {
 
   private static final String DEFAULT_FORMAT_DESCRIPTION = "Filter string for filtering object using " +
-          "ficum-query-language, checkout https://github" +
-          ".com/bitgrip/ficum#ficum-query-language. Allowed fieldNames are: %s";
+          "ficum-query-language, checkout https://github.com/bitgrip/ficum#ficum-query-language. Allowed fieldNames " +
+          "are: %s";
 
   private TypeResolver resolver;
 

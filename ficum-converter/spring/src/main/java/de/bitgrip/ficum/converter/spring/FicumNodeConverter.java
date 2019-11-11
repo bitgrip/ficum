@@ -33,9 +33,9 @@ public class FicumNodeConverter implements GenericConverter {
   public Object convert(Object source, TypeDescriptor sourceType, TypeDescriptor targetType) {
     if (sourceType.getType().equals(String.class)) {
       FicumExpression ficumExpressionAnnotation = targetType.getAnnotation(FicumExpression.class);
-      if (ficumExpressionAnnotation == null) {
-        throw new IllegalStateException("missing " + FicumExpression.class.getName() + " annotation to node parameter for defining " +
-                        "allowedSectorNames");
+      if (ficumExpressionAnnotation == null || ficumExpressionAnnotation.value().length == 0) {
+        throw new IllegalStateException("missing " + FicumExpression.class.getName() + " annotation to node parameter" +
+                " for defining allowedSectorNames");
       }
       return convertStringToNode((String) source, ficumExpressionAnnotation.value());
     } else if (Node.class.isAssignableFrom(sourceType.getType())) {
