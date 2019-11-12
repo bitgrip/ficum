@@ -47,7 +47,7 @@ public class ConstraintParser extends ArgumentParser {
     protected Rule Constraint() {
         return Sequence(Selector(), Comparison(),
                 FirstOf(Argument(), Sequence(Ch('['), Argument(),
-                        OneOrMore(Sequence(Ch(','), Optional(Ch(' ')), Argument())), Ch(']'))),
+                        ZeroOrMore(Sequence(Ch(','), Optional(Ch(' ')), Argument())), Ch(']'))),
                 new Action<Comparable<?>>() {
                     public boolean run(Context<Comparable<?>> context) {
                         List<Comparable<?>> arguments = new ArrayList<Comparable<?>>();

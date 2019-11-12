@@ -1,5 +1,6 @@
 package de.bitgrip.ficum.parser;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -142,9 +143,21 @@ public class ConstraintParserTest {
 
     @Test()
     public void testSingleArgArray() {
+        Constraint<Comparable<?>> expected = new Constraint<Comparable<?>>("second", Comparison.NEAR, 1);
         String input = "second=nr=[1]";
 
-        assertError(InvalidInputError.class, input);
+        assertValue(expected, input);
+    }
+
+    @Test()
+    public void testMultipleArgArray() {
+        List<Integer> args = new ArrayList<>();
+        args.add(1);
+        args.add(2);
+        Constraint<List<Integer>> expected = new Constraint<>("second", Comparison.IN, args);
+        String input = "second=in=[1,2]";
+
+        assertValue(expected, input);
     }
 
     @Test()
