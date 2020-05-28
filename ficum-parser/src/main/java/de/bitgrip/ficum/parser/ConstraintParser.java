@@ -1,26 +1,17 @@
 package de.bitgrip.ficum.parser;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
+import de.bitgrip.ficum.node.Comparison;
+import de.bitgrip.ficum.node.Constraint;
 import org.parboiled.Action;
 import org.parboiled.Context;
 import org.parboiled.Rule;
 import org.parboiled.annotations.BuildParseTree;
 import org.parboiled.annotations.SuppressSubnodes;
 
-import de.bitgrip.ficum.node.Comparison;
-import de.bitgrip.ficum.node.Constraint;
+import java.util.*;
 
 @BuildParseTree
 public class ConstraintParser extends ArgumentParser {
-
-    protected String selector;
-
-    protected Comparison comparison;
 
     protected String[] allowedSelectors = {};
 
@@ -34,12 +25,24 @@ public class ConstraintParser extends ArgumentParser {
         });
     }
 
-    protected Rule Comparison() {
-        comparison = null;
-        return Sequence(FirstOf(Comparison.allSigns()), new Action<Object>() {
+    @Override
+    public Rule root() {
+        return Sequence(Constraint(), EOI);
+    }
+
+    @SuppressSubnodes
+    protected Rule Selector() {
+        return Sequence(FirstOf(allowedSelectors), new Action<Object>() {
             public boolean run(Context<Object> context) {
-                comparison = Comparison.from(match());
-                return true;
+                return push(new Selector(match()));
+            }
+        });
+    }
+
+    protected Rule Comparison() {
+        return Sequence(FirstOf(Comparison.allSigns()), new Action<Comparison>() {
+            public boolean run(Context<Comparison> context) {
+                return push(Comparison.from(match()));
             }
         });
     }
@@ -51,34 +54,36 @@ public class ConstraintParser extends ArgumentParser {
                 new Action<Comparable<?>>() {
                     public boolean run(Context<Comparable<?>> context) {
                         List<Comparable<?>> arguments = new ArrayList<Comparable<?>>();
-                        while (!context.getValueStack().isEmpty() && isBaseType(context.getValueStack().peek())) {
-                            arguments.add(context.getValueStack().pop());
+                        Comparison comparison = null;
+                        Selector selector = null;
+                        while (!context.getValueStack().isEmpty()) {
+                            if (peek() instanceof Comparison) {
+                                comparison = (Comparison) pop();
+                            } else if (peek() instanceof Selector) {
+                                selector = (Selector) pop();
+                            } else if (isBaseType(context.getValueStack().peek())) {
+                                arguments.add(context.getValueStack().pop());
+                            } else {
+                                break;
+                            }
                         }
 
                         if (arguments.size() == 1) {
-                            return push(new Constraint<Comparable<?>>(selector, comparison, arguments.get(0)));
+                            return push(new Constraint<Comparable<?>>(selector.value, comparison, arguments.get(0)));
                         } else {
                             Collections.reverse(arguments);
-                            return push(new Constraint<List<Comparable<?>>>(selector, comparison, arguments));
+                            return push(new Constraint<List<Comparable<?>>>(selector.value, comparison, arguments));
                         }
                     }
                 });
     }
 
-    @Override
-    public Rule root() {
-        return Sequence(Constraint(), EOI);
-    }
+    private static class Selector {
+        String value;
 
-    @SuppressSubnodes
-    protected Rule Selector() {
-        selector = null;
-        return Sequence(FirstOf(allowedSelectors), new Action<Object>() {
-            public boolean run(Context<Object> context) {
-                selector = match();
-                return true;
-            }
-        });
+        Selector(String value) {
+            this.value = value;
+        }
     }
 
 }
