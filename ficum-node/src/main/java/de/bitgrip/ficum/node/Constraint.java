@@ -17,6 +17,10 @@ public class Constraint<T> {
         this.argument = argument;
     }
 
+    public Constraint(Selector selector, Comparison comparison, T argument) {
+        this(checkArgNotNull(selector, "selector").getValue(), comparison, argument);
+    }
+
     public static <T> T checkArgNotNull(T reference, String parameterName) {
         if (reference == null) {
             throw new IllegalArgumentException(String.format("'%s' must not be null", parameterName));

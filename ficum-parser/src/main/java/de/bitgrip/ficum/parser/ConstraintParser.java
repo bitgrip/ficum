@@ -2,6 +2,7 @@ package de.bitgrip.ficum.parser;
 
 import de.bitgrip.ficum.node.Comparison;
 import de.bitgrip.ficum.node.Constraint;
+import de.bitgrip.ficum.node.Selector;
 import org.parboiled.Action;
 import org.parboiled.Context;
 import org.parboiled.Rule;
@@ -69,21 +70,13 @@ public class ConstraintParser extends ArgumentParser {
                         }
 
                         if (arguments.size() == 1) {
-                            return push(new Constraint<Comparable<?>>(selector.value, comparison, arguments.get(0)));
+                            return push(new Constraint<Comparable<?>>(selector, comparison, arguments.get(0)));
                         } else {
                             Collections.reverse(arguments);
-                            return push(new Constraint<List<Comparable<?>>>(selector.value, comparison, arguments));
+                            return push(new Constraint<List<Comparable<?>>>(selector, comparison, arguments));
                         }
                     }
                 });
-    }
-
-    private static class Selector {
-        String value;
-
-        Selector(String value) {
-            this.value = value;
-        }
     }
 
 }
