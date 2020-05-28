@@ -3,6 +3,7 @@ package de.bitgrip.ficum.parser;
 import de.bitgrip.ficum.node.Comparison;
 import de.bitgrip.ficum.node.Constraint;
 import de.bitgrip.ficum.node.Selector;
+import de.bitgrip.ficum.node.SimpleSelector;
 import org.parboiled.Action;
 import org.parboiled.Context;
 import org.parboiled.Rule;
@@ -35,7 +36,7 @@ public class ConstraintParser extends ArgumentParser {
     protected Rule Selector() {
         return Sequence(FirstOf(allowedSelectors), new Action<Object>() {
             public boolean run(Context<Object> context) {
-                return push(new Selector(match()));
+                return push(new SimpleSelector(match()));
             }
         });
     }

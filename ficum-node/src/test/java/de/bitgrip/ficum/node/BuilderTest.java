@@ -1,11 +1,11 @@
 package de.bitgrip.ficum.node;
 
+import org.junit.Assert;
+import org.junit.Test;
+
 import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Deque;
-
-import org.junit.Assert;
-import org.junit.Test;
 
 public class BuilderTest {
 
@@ -44,7 +44,7 @@ public class BuilderTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testIncompleteSelectorConstraint() {
-        Builder.start().constraint(null, Comparison.EQUALS, 1L).build();
+        Builder.start().constraint((String) null, Comparison.EQUALS, 1L).build();
     }
 
     @Test()
@@ -190,7 +190,7 @@ public class BuilderTest {
 
         @SuppressWarnings("unchecked")
         ConstraintNode<Iterable<Comparable<?>>> constraintNode = (ConstraintNode<Iterable<Comparable<?>>>) root;
-        Comparable<?>[] expected = { 1, 2.2, 3.3f, "x.x" };
+        Comparable<?>[] expected = {1, 2.2, 3.3f, "x.x"};
         Assert.assertEquals(Arrays.asList(expected), constraintNode.getArgument());
     }
 
@@ -201,13 +201,13 @@ public class BuilderTest {
 
         @SuppressWarnings("unchecked")
         ConstraintNode<Iterable<Comparable<?>>> constraintNode = (ConstraintNode<Iterable<Comparable<?>>>) root;
-        Double[] expected = { 1.1, 2.2, 3.3 };
+        Double[] expected = {1.1, 2.2, 3.3};
         Assert.assertEquals(Arrays.asList(expected), constraintNode.getArgument());
     }
 
     @Test()
     public void testIterableFewDoubleConstraint() {
-        Double[] array = { 1.1 };
+        Double[] array = {1.1};
         Node root = Builder.start().constraint("first", Comparison.WITHIN, array).build();
         @SuppressWarnings("unchecked")
         ConstraintNode<Iterable<Comparable<?>>> constraintNode = (ConstraintNode<Iterable<Comparable<?>>>) root;
@@ -217,7 +217,7 @@ public class BuilderTest {
 
     @Test()
     public void testIterableFewStringConstraint() {
-        String[] array = { "hello" };
+        String[] array = {"hello"};
         Node root = Builder.start().constraint("first", Comparison.WITHIN, array).build();
         @SuppressWarnings("unchecked")
         ConstraintNode<Iterable<Comparable<?>>> constraintNode = (ConstraintNode<Iterable<Comparable<?>>>) root;
@@ -232,13 +232,13 @@ public class BuilderTest {
 
         @SuppressWarnings("unchecked")
         ConstraintNode<Iterable<Comparable<?>>> constraintNode = (ConstraintNode<Iterable<Comparable<?>>>) root;
-        Integer[] expected = { 1, 2, 3 };
+        Integer[] expected = {1, 2, 3};
         Assert.assertEquals(Arrays.asList(expected), constraintNode.getArgument());
     }
 
     @Test()
     public void testIterableFewIntegerConstraint() {
-        Integer[] array = { 1 };
+        Integer[] array = {1};
         Node root = Builder.start().constraint("first", Comparison.WITHIN, array).build();
         @SuppressWarnings("unchecked")
         ConstraintNode<Iterable<Comparable<?>>> constraintNode = (ConstraintNode<Iterable<Comparable<?>>>) root;
@@ -304,6 +304,18 @@ public class BuilderTest {
     @Test()
     public void testSimpleConstraint() {
         Node n = Builder.start().constraint("first", Comparison.EQUALS, 1L).build();
+        Assert.assertTrue(n.getClass().isAssignableFrom(ConstraintNode.class));
+
+        ConstraintNode<?> constraint = (ConstraintNode<?>) n;
+
+        Assert.assertEquals("first", constraint.getSelector());
+        Assert.assertEquals(Comparison.EQUALS, constraint.getComparison());
+        Assert.assertEquals(1l, constraint.getArgument());
+    }
+
+    @Test()
+    public void testSelectorConstraint() {
+        Node n = Builder.start().constraint(new SimpleSelector("first"), Comparison.EQUALS, 1L).build();
         Assert.assertTrue(n.getClass().isAssignableFrom(ConstraintNode.class));
 
         ConstraintNode<?> constraint = (ConstraintNode<?>) n;

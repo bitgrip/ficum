@@ -222,6 +222,23 @@ public class Builder {
          * @param comparison
          *            {@link Comparison} to apply
          * @param argument
+         *            {@link Comparable} to process against the value of the
+         *            selected field
+         * @return {@link Builder} this builder object
+         */
+        public DefinedBuilder constraint(Selector selector, Comparison comparison, Comparable<?> argument) {
+            infixStack.push(new Constraint<Comparable<?>>(selector, comparison, argument));
+            return definedBuilder;
+        }
+
+        /**
+         * Add a {@link Constraint} to the stack
+         *
+         * @param selector
+         *            identifier for an field this constraint applies to
+         * @param comparison
+         *            {@link Comparison} to apply
+         * @param argument
          *            Array of Comparable to process against the value of the
          *            selected field
          * @return {@link Builder} this builder object
